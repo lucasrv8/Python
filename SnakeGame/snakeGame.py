@@ -79,6 +79,9 @@ def game():
     appleOverY = randrange(30,(tamAltura - 10) - tam,10)
     appleBonusX = randrange(10,(tamLargura - 10) - tam,10)
     applebonusY = randrange(30,(tamAltura - 10) - tam,10)
+    #terminar a maçã 
+    appleLifeX = randrange(10,(tamLargura - 10) - tam,10)
+    appleLifeY = randrange(30,(tamAltura - 10) - tam,10)
     speedX = 0
     speedY = 0
     snakeBody = [] #Corpo da cobra

@@ -198,12 +198,15 @@ def game():
             snakeX = snakeX + speedX
             snakeY = snakeY + speedY
             text("Score: " + str(snakeLen - 1), white, 30, 5,5)
+            #Maçãs que pontuam e tbm redefinem as posições das outras maçãs
             if snakeX == appleX and snakeY == appleY:
                 appleX = randrange(10,(tamLargura - 10) - tam,10)
                 appleY = randrange(30,(tamAltura - 10) - tam,10)
                 snakeLen += 1
                 appleOverX = randrange(10,(tamLargura - 10) - tam,10)
                 appleOverY = randrange(30,(tamAltura - 10) - tam,10) 
+                appleBonusX = randrange(10,(tamLargura - 10) - tam,10)
+                applebonusY = randrange(30,(tamAltura - 10) - tam,10)
             #Maçãs que causam o fim do jogo
             if (snakeLen - 1) == listAppleDeath[0] or (snakeLen - 1) == listAppleDeath[1] or (snakeLen - 1) == listAppleDeath[2] or (snakeLen - 1) == listAppleDeath[3] or (snakeLen - 1) == listAppleDeath[4] or (snakeLen - 1) == listAppleDeath[5] or (snakeLen - 1) == listAppleDeath[6]:
                 if snakeX == appleOverX and snakeY == appleOverY:

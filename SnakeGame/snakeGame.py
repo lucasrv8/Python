@@ -189,6 +189,7 @@ def game():
                 if event.key == pygame.K_o:
                     snakeLen += 49
             #print(event)
+        #Loop principal de funcionamento do jogo
         if jogoOn:  #Serve para não executar nada caso o jogo termine
             tela.fill(black) #Fill serve para dar cor
             pygame.draw.rect(tela, lightblue, [10,27, 300, 3]) #Barra superior

@@ -23,8 +23,12 @@ try:
 except:
     print("Erro ao iniciar o pygame")
 tela = pygame.display.set_mode((tamLargura, tamAltura)) #Desenha a caixa de visualização
-pygame.display.set_caption("Snake") #Serve para dar nome a janela e o icone
+pygame.display.set_caption("Snake", "icon2.") #Serve para dar nome a janela e o icone
 clock = pygame.time.Clock() #É um relogio que vai ajudar na limitação de FPS devido ao fato da velocidade estar alta
+pygame.mixer.init()
+pygame.mixer.pre_init(44100, -16, 2, 2048)
+pygame.init()
+pygame.mixer.music.load('som.mp3')
 
 def text(msg, color, tamTxt, widthX, heightY):
     font = pygame.font.SysFont(None, tamTxt) #Atribui a uma variavel uma determinada font e tamanho dela 
@@ -71,6 +75,7 @@ def selectMode():
         pygame.display.update()
 
 def game():
+    pygame.mixer.music.play()
     snakeX = randrange(10,(tamLargura - 10) - tam,10) #Posição no eixo X de onde a cobra está
     snakeY = randrange(30,(tamAltura - 10) - tam,10) #Posição no eixo Y de onde a cobra está
     appleX = randrange(10,(tamLargura - 10) - tam,10) #Posição no eixo X de onde a maça está
@@ -191,10 +196,14 @@ def game():
                     gameOver = True
                 if event.key == pygame.K_o:
                     snakeLen += 49
+                #Problema com o botão de pause, só funcianda quando existe apenas a cabeça da cobra
+                if event.key == pygame.K_m:
+                    pygame.mixer.music.play()
             #print(event)
         #Loop principal de funcionamento do jogo
         if jogoOn:  #Serve para não executar nada caso o jogo termine
             tela.fill(black) #Fill serve para dar cor
+            pygame.mixer.music.set_volume(1)
             pygame.draw.rect(tela, lightblue, [10,27, 300, 3]) #Barra superior
             pygame.draw.rect(tela, lightblue, [7,27, 3, 205]) #Barra esquerda
             pygame.draw.rect(tela, lightblue, [10,230, 300, 3]) #Barra inferior

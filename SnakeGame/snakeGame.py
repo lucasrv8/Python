@@ -293,9 +293,9 @@ def game():
                         snakeLen -= half
                         if (snakeLen - 1) <= 0:
                             snakeLen = 1
-                    elif whatApple >= 90 and whatApple < 98: #8% de chance
+                    elif whatApple >= 90 and whatApple < 98: #8% de chance de perder o jogo
                         gameOver = True
-                    elif whatApple == 99: #1% de chance
+                    elif whatApple == 99: #1% de chance de ganhar o jogo
                         gameOver = True
                         gameWin = 1
                     else:

@@ -29,7 +29,7 @@ clock = pygame.time.Clock() #É um relogio que vai ajudar na limitação de FPS 
 pygame.mixer.init() #inicia o mixer
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
-pygame.mixer.music.load("mordida.mp3") #Carrega a musica
+pygame.mixer.music.load("som.mp3") #Carrega a musica
 
 def text(msg, color, tamTxt, widthX, heightY):
     font = pygame.font.SysFont(None, tamTxt) #Atribui a uma variavel uma determinada font e tamanho dela 
@@ -80,6 +80,7 @@ def selectMode():
         pygame.display.update()
 
 def game():
+    #pygame.mixer.music.play()
     snakeX = randrange(10,(tamLargura - 10) - tam,10) #Posição no eixo X de onde a cobra está
     snakeY = randrange(30,(tamAltura - 10) - tam,10) #Posição no eixo Y de onde a cobra está
     appleX = randrange(10,(tamLargura - 10) - tam,10) #Posição no eixo X de onde a maça está
@@ -94,6 +95,7 @@ def game():
     speedY = 0
     snakeBody = [] #Corpo da cobra
     snakeLen = 1 #Tamanho da cobra
+    score = 0
     listAppleDeath = []
     listAppleGold = []
     listAppleRandom = []
@@ -128,6 +130,7 @@ def game():
                         speedY = 0
                         snakeBody = []  #Corpo da cobra
                         snakeLen = 1
+                        score = 0
                         gameWin = 0
                         for value in range(7): #Escolhe outros números aleatórios para a maça verde
                             valueRand = randrange(0, 100)
@@ -152,6 +155,7 @@ def game():
                         speedY = 0
                         snakeBody = []  #Corpo da cobra
                         snakeLen = 1
+                        score = 0
                         gameWin = 0
                         for value in range(7): #Escolhe outros números aleatórios para a maça verde
                             valueRand = randrange(0, 100)
@@ -168,7 +172,7 @@ def game():
             if gameWin == 0:
                 tela.fill(red)
                 text("GAME OVER", black, 50, 60, 30)
-                text("Score: " + str(snakeLen-1), black, 30, 120, 80)
+                text("Score: " + str(score), black, 30, 120, 80)
                 pygame.draw.rect(tela, black, [90,115,135,27])
                 text("Continue(C)", white, 30, 98, 120)
                 pygame.draw.rect(tela, black, [120, 150, 75, 27])
@@ -205,7 +209,18 @@ def game():
                 if event.key == pygame.K_p:
                     gameOver = True
                 if event.key == pygame.K_o:
+                    score += 49
                     snakeLen += 49
+                if event.key == pygame.K_k:
+                    half = int(snakeLen / 2)
+                    for valueRm in range(half):
+                        rm = snakeBody[valueRm]
+                        snakeBody.remove(rm)
+                    snakeLen -= half
+                    if (snakeLen - 1) <= 0:
+                        snakeLen = 1
+                if event.key == pygame.K_a:
+                    print(valueRm)
                 #Problema com o botão de pause, só funcianda quando existe apenas a cabeça da cobra
                 if event.key == pygame.K_m:
                     pygame.mixer.music.play()
@@ -216,17 +231,29 @@ def game():
             pygame.mixer.music.set_volume(1)
             pygame.draw.rect(tela, lightblue, [10,27, 300, 3]) #Barra superior
             pygame.draw.rect(tela, lightblue, [7,27, 3, 205]) #Barra esquerda
-            pygame.draw.rect(tela, lightblue, [10,230, 300, 3]) #Barra inferior
+            pygame.draw.rect(tela, lightblue, [7,230, 306, 3]) #Barra inferior
             pygame.draw.rect(tela, lightblue, [310,27, 3, 205]) #Barra direita
             snakeX = snakeX + speedX
             snakeY = snakeY + speedY
-            text("Score: " + str(snakeLen - 1), white, 30, 5,5)
+            text("Score: " + str(score), white, 30, 5,5)
             #Maçãs que pontuam e tbm redefinem as posições das outras maçãs
             if snakeX == appleX and snakeY == appleY:
-                appleX = randrange(10,(tamLargura - 10) - tam,10)
-                appleY = randrange(30,(tamAltura - 10) - tam,10)
+               # for i in range(snakeLen):
+                #    if snakeBody[i] !=
+                possibleX = randrange(10,(tamLargura - 10) - tam,10)
+                possibleY = randrange(30,(tamAltura - 10) - tam,10)
+                possibleXY = [possibleX, possibleY]
+                for i in range(snakeLen):
+                    if possibleXY == snakeBody[i]:
+                        i = 0
+                        possibleX = randrange(10,(tamLargura - 10) - tam,10)
+                        possibleY = randrange(30,(tamAltura - 10) - tam,10)
+                        possibleXY = [possibleX, possibleY]
+                appleX = possibleX
+                appleY = possibleY
                 snakeLen += 1
-                pygame.mixer.music.play()
+                score += 1
+                #pygame.mixer.music.play(1, 0.1)
                 appleOverX = randrange(10,(tamLargura - 10) - tam,10)
                 appleOverY = randrange(30,(tamAltura - 10) - tam,10) 
                 appleBonusX = randrange(10,(tamLargura - 10) - tam,10)
@@ -234,33 +261,45 @@ def game():
                 appleRandomX = randrange(10,(tamLargura - 10) - tam,10)
                 appleRandomY = randrange(30,(tamAltura - 10) - tam,10)
             #Maçãs que causam o fim do jogo
-            if (snakeLen - 1) == listAppleDeath[0] or (snakeLen - 1) == listAppleDeath[1] or (snakeLen - 1) == listAppleDeath[2] or (snakeLen - 1) == listAppleDeath[3] or (snakeLen - 1) == listAppleDeath[4] or (snakeLen - 1) == listAppleDeath[5] or (snakeLen - 1) == listAppleDeath[6]:
+            if score == listAppleDeath[0] or score == listAppleDeath[1] or score == listAppleDeath[2] or score == listAppleDeath[3] or score == listAppleDeath[4] or score == listAppleDeath[5] or score == listAppleDeath[6]:
                 if snakeX == appleOverX and snakeY == appleOverY:
                     #snakeLen = 1
-                    pygame.mixer.music.play() #Inicia a reprodução da musica carregada
+                    #pygame.mixer.music.play() #Inicia a reprodução da musica carregada
                     gameOver = True
             #Maçãs que dão um bonus de crescimento de + 3
-            if (snakeLen - 1) == listAppleGold[0] or (snakeLen - 1) == listAppleGold[1] or (snakeLen - 1) == listAppleGold[2] or (snakeLen - 1) == listAppleGold[3] or (snakeLen - 1) == listAppleGold[4] or (snakeLen - 1) == listAppleGold[5] or (snakeLen - 1) == listAppleGold[6]:
-                if (snakeX == appleBonusX and snakeY == applebonusY) or (snakeX == (appleBonusX + 10) and snakeY == (applebonusY + 10)):
-                    pygame.mixer.music.play()
+            if score == listAppleGold[0] or score == listAppleGold[1] or score == listAppleGold[2] or score == listAppleGold[3] or score == listAppleGold[4] or score == listAppleGold[5] or score == listAppleGold[6]:
+                if (snakeX == appleBonusX and snakeY == applebonusY) or (snakeX == (appleBonusX + 10) and snakeY == (applebonusY + 10)) or (snakeX == (appleBonusX) and snakeY == (applebonusY + 10)) or (snakeX == (appleBonusX + 10) and snakeY == (applebonusY)):
+                    #pygame.mixer.music.play()
                     snakeLen += 3
+                    score += 3
             #Maças random
-            if (snakeLen - 1) == listAppleRandom[0] or (snakeLen - 1) == listAppleRandom[1] or (snakeLen - 1) == listAppleRandom[2] or (snakeLen - 1) == listAppleRandom[3] or (snakeLen - 1) == listAppleRandom[4] or (snakeLen - 1) == listAppleRandom[5] or (snakeLen - 1) == listAppleRandom[6]:
+            if score == listAppleRandom[0] or score == listAppleRandom[1] or score == listAppleRandom[2] or score == listAppleRandom[3] or score == listAppleRandom[4] or score == listAppleRandom[5] or score == listAppleRandom[6]:
                 if snakeX == appleRandomX and snakeY == appleRandomY:
-                    pygame.mixer.music.play()
-                    whatApple = randrange(0,10)
+                    #pygame.mixer.music.play()
+                    whatApple = randrange(0,100)
                     print(whatApple)
-                    if whatApple >= 0 and whatApple < 4: #40% de chance
-                        snakeLen += 3
-                    elif whatApple >= 4 and whatApple < 7: #30% de chance
+                    if whatApple >= 0 and whatApple < 55: #55% de chance ganhar 6 pontos. obs: aumenta a cobra
                         snakeLen += 6
-                    elif whatApple >= 7 and whatApple < 9: #20% de chance
+                        score += 6
+                    elif whatApple >= 55 and whatApple < 75: #20% de chance perder 8 pontos, mas não diminui a cobra
+                        score -= 8
+                        if score <= 0:
+                            score = 0
+                    elif whatApple >= 75 and whatApple < 90: #15% de chance para diminuir a cobra ao meio, e não a pontuação
+                        half = int(snakeLen / 2)
+                        for valueRm in range(half):
+                            rm = snakeBody[valueRm]
+                            snakeBody.remove(rm)
+                        snakeLen -= half
+                        if (snakeLen - 1) <= 0:
+                            snakeLen = 1
+                    elif whatApple >= 90 and whatApple < 98: #8% de chance
                         gameOver = True
-                    elif whatApple == 9:
+                    elif whatApple == 99: #1% de chance
                         gameOver = True
                         gameWin = 1
                     else:
-                        print("tem 10" + whatApple)
+                        print("tem 100" + whatApple)
             #Dificuldades
             #Fácil
             if mode == 0:
@@ -292,13 +331,13 @@ def game():
                 gameOver = True
             snake(snakeBody)
             apple(appleX, appleY)
-            if (snakeLen - 1) == listAppleDeath[0] or (snakeLen - 1) == listAppleDeath[1] or (snakeLen - 1) == listAppleDeath[2] or (snakeLen - 1) == listAppleDeath[3] or (snakeLen - 1) == listAppleDeath[4] or (snakeLen - 1) == listAppleDeath[5] or (snakeLen - 1) == listAppleDeath[6]:
+            if score == listAppleDeath[0] or score == listAppleDeath[1] or score == listAppleDeath[2] or score == listAppleDeath[3] or score == listAppleDeath[4] or score == listAppleDeath[5] or score == listAppleDeath[6]:
                 appleDeath(appleOverX, appleOverY)
-            if (snakeLen - 1) == listAppleGold[0] or (snakeLen - 1) == listAppleGold[1] or (snakeLen - 1) == listAppleGold[2] or (snakeLen - 1) == listAppleGold[3] or (snakeLen - 1) == listAppleGold[4] or (snakeLen - 1) == listAppleGold[5] or (snakeLen - 1) == listAppleGold[6]:
+            if score == listAppleGold[0] or score == listAppleGold[1] or score == listAppleGold[2] or score == listAppleGold[3] or score == listAppleGold[4] or score == listAppleGold[5] or score == listAppleGold[6]:
                 appleBonus(appleBonusX, applebonusY)
-            if (snakeLen - 1) == listAppleRandom[0] or (snakeLen - 1) == listAppleRandom[1] or (snakeLen - 1) == listAppleRandom[2] or (snakeLen - 1) == listAppleRandom[3] or (snakeLen - 1) == listAppleRandom[4] or (snakeLen - 1) == listAppleRandom[5] or (snakeLen - 1) == listAppleRandom[6]:
+            if score == listAppleRandom[0] or score == listAppleRandom[1] or score == listAppleRandom[2] or score == listAppleRandom[3] or score == listAppleRandom[4] or score == listAppleRandom[5] or score == listAppleRandom[6]:
                 appleRandom(appleRandomX, appleRandomY)
-            if (snakeLen - 1) >= 100:
+            if score >= 100:
                 gameOver = True
                 gameWin = 1
             if mode == 0 or mode == 1:

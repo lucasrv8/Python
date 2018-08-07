@@ -287,7 +287,7 @@ def game():
                             score = 0
                     elif whatApple >= 75 and whatApple < 90: #15% de chance para diminuir a cobra ao meio, e não a pontuação
                         half = int(snakeLen / 2)
-                        for valueRm in range(half):
+                        for valueRm in range(half): #Faz com que a cobra seja cortada ao meio começando do rabo para o meio do corpo
                             rm = snakeBody[valueRm]
                             snakeBody.remove(rm)
                         snakeLen -= half

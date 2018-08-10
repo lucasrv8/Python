@@ -194,18 +194,22 @@ def game():
                     #snakeX = snakeX - 10
                     speedY = 0
                     speedX = - tam
+                    break
                 if event.key == pygame.K_RIGHT and speedX != -tam:
                     #snakeX = snakeX + 10
                     speedY = 0
                     speedX = tam
+                    break
                 if event.key == pygame.K_UP and speedY != tam:
                     #snakeY = snakeY - 10
                     speedY = - tam
                     speedX = 0
+                    break
                 if event.key == pygame.K_DOWN and speedY != -tam:
                     #snakeY = snakeY + 10  201807230033
                     speedY = tam
                     speedX = 0
+                    break
                 if event.key == pygame.K_p:
                     gameOver = True
                 if event.key == pygame.K_o:
@@ -238,17 +242,16 @@ def game():
             text("Score: " + str(score), white, 30, 5,5)
             #Maçãs que pontuam e tbm redefinem as posições das outras maçãs
             if snakeX == appleX and snakeY == appleY:
-               # for i in range(snakeLen):
-                #    if snakeBody[i] !=
                 possibleX = randrange(10,(tamLargura - 10) - tam,10)
                 possibleY = randrange(30,(tamAltura - 10) - tam,10)
                 possibleXY = [possibleX, possibleY]
-                for i in range(snakeLen):
+                i = snakeLen -1
+                for i in range(0):
                     if possibleXY == snakeBody[i]:
-                        i = 0
                         possibleX = randrange(10,(tamLargura - 10) - tam,10)
                         possibleY = randrange(30,(tamAltura - 10) - tam,10)
                         possibleXY = [possibleX, possibleY]
+                        i = snakeLen -1
                 appleX = possibleX
                 appleY = possibleY
                 snakeLen += 1

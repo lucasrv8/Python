@@ -1,11 +1,13 @@
 import pygame
 from random import randrange
+from pygame.mixer import Sound
 
 #Tamanho da janela
 tamLargura = 320
 tamAltura = 240
 tam = 10
 mode = 0
+
 
 #cores 
 white = (255,255,255)
@@ -29,16 +31,19 @@ clock = pygame.time.Clock() #É um relogio que vai ajudar na limitação de FPS 
 pygame.mixer.init() #inicia o mixer
 pygame.mixer.pre_init(44100, -16, 2, 2048)
 pygame.init()
-pygame.mixer.music.load("som.mp3") #Carrega a musica
+playSound = pygame.mixer.Sound("mordida.wav") #Carrega a musica
 
 def text(msg, color, tamTxt, widthX, heightY):
     font = pygame.font.SysFont(None, tamTxt) #Atribui a uma variavel uma determinada font e tamanho dela 
     textmsg = font.render(msg, True, color) #Função render aplica a cor, o antialising e o background a menssagem
     tela.blit(textmsg, [widthX, heightY]) #Função blit coloca a menssagem no lugar em que deseja aparecer passando a menssagem e a posição
+
 def snake(snakeBody):
     for i in snakeBody:
         pygame.draw.rect(tela,lightblue, [i[0],i[1],tam,tam]) #Desenha no display, primeiro argumento é onde vai ser desenhado, segundo é a cor, e depois as posições sendo um conjudo em um terceiro argumento só
-            
+        pygame.draw.rect(tela,black, [i[0],i[1],1,tam])
+        pygame.draw.rect(tela,black, [i[0],i[1],tam,1])
+
 def apple(appleX, appleY):
     pygame.draw.rect(tela, red, [appleX,appleY, tam, tam])
 
@@ -49,7 +54,7 @@ def appleBonus(appleBonusX, appleBonusY):
     pygame.draw.rect(tela, gold, [appleBonusX, appleBonusY, tam*2, tam*2])
 
 def appleRandom(appleRandomX, appleRandomY):
-    pygame.draw.rect(tela, purple, [appleRandomX, appleRandomY, tam, tam])
+    pygame.draw.rect(tela, purple, [appleRandomX, appleRandomY, tam, tam])        
 
 def selectMode():
     typeMode = True
@@ -107,7 +112,7 @@ def game():
         listAppleGold.insert(0,valueRand)
         valueRand = randrange(0,100)
         listAppleRandom.insert(0,valueRand)
-        print(valueRand)
+        #print(valueRand)
     jogoOn = True
     gameOver = False
     gameWin = 0
@@ -191,22 +196,18 @@ def game():
                 jogoOn = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and speedX != tam:
-                    #snakeX = snakeX - 10
                     speedY = 0
                     speedX = - tam
                     break
                 if event.key == pygame.K_RIGHT and speedX != -tam:
-                    #snakeX = snakeX + 10
                     speedY = 0
                     speedX = tam
                     break
                 if event.key == pygame.K_UP and speedY != tam:
-                    #snakeY = snakeY - 10
                     speedY = - tam
                     speedX = 0
                     break
                 if event.key == pygame.K_DOWN and speedY != -tam:
-                    #snakeY = snakeY + 10  201807230033
                     speedY = tam
                     speedX = 0
                     break
@@ -224,7 +225,13 @@ def game():
                     if (snakeLen - 1) <= 0:
                         snakeLen = 1
                 if event.key == pygame.K_a:
-                    print(valueRm)
+                    print("-----")
+                    print(snakeX)
+                    print(snakeY)
+                    print("a")
+                    print(appleX)
+                    print(appleY)
+                    print("-----")
                 #Problema com o botão de pause, só funcianda quando existe apenas a cabeça da cobra
                 if event.key == pygame.K_m:
                     pygame.mixer.music.play()
@@ -242,16 +249,18 @@ def game():
             text("Score: " + str(score), white, 30, 5,5)
             #Maçãs que pontuam e tbm redefinem as posições das outras maçãs
             if snakeX == appleX and snakeY == appleY:
+                playSound.play()
                 possibleX = randrange(10,(tamLargura - 10) - tam,10)
                 possibleY = randrange(30,(tamAltura - 10) - tam,10)
                 possibleXY = [possibleX, possibleY]
                 i = snakeLen -1
-                for i in range(0):
+                while i >= 0:
                     if possibleXY == snakeBody[i]:
                         possibleX = randrange(10,(tamLargura - 10) - tam,10)
                         possibleY = randrange(30,(tamAltura - 10) - tam,10)
                         possibleXY = [possibleX, possibleY]
-                        i = snakeLen -1
+                        i = snakeLen - 1
+                    i -= 1
                 appleX = possibleX
                 appleY = possibleY
                 snakeLen += 1
@@ -266,19 +275,21 @@ def game():
             #Maçãs que causam o fim do jogo
             if score == listAppleDeath[0] or score == listAppleDeath[1] or score == listAppleDeath[2] or score == listAppleDeath[3] or score == listAppleDeath[4] or score == listAppleDeath[5] or score == listAppleDeath[6]:
                 if snakeX == appleOverX and snakeY == appleOverY:
-                    #snakeLen = 1
                     #pygame.mixer.music.play() #Inicia a reprodução da musica carregada
+                    playSound.play()
                     gameOver = True
             #Maçãs que dão um bonus de crescimento de + 3
             if score == listAppleGold[0] or score == listAppleGold[1] or score == listAppleGold[2] or score == listAppleGold[3] or score == listAppleGold[4] or score == listAppleGold[5] or score == listAppleGold[6]:
                 if (snakeX == appleBonusX and snakeY == applebonusY) or (snakeX == (appleBonusX + 10) and snakeY == (applebonusY + 10)) or (snakeX == (appleBonusX) and snakeY == (applebonusY + 10)) or (snakeX == (appleBonusX + 10) and snakeY == (applebonusY)):
                     #pygame.mixer.music.play()
+                    playSound.play()                    
                     snakeLen += 3
                     score += 3
             #Maças random
             if score == listAppleRandom[0] or score == listAppleRandom[1] or score == listAppleRandom[2] or score == listAppleRandom[3] or score == listAppleRandom[4] or score == listAppleRandom[5] or score == listAppleRandom[6]:
                 if snakeX == appleRandomX and snakeY == appleRandomY:
                     #pygame.mixer.music.play()
+                    playSound.play()
                     whatApple = randrange(0,100)
                     print(whatApple)
                     if whatApple >= 0 and whatApple < 55: #55% de chance ganhar 6 pontos. obs: aumenta a cobra
@@ -290,7 +301,7 @@ def game():
                             score = 0
                     elif whatApple >= 75 and whatApple < 90: #15% de chance para diminuir a cobra ao meio, e não a pontuação
                         half = int(snakeLen / 2)
-                        for valueRm in range(half): #Faz com que a cobra seja cortada ao meio começando do rabo para o meio do corpo
+                        for valueRm in range(half):
                             rm = snakeBody[valueRm]
                             snakeBody.remove(rm)
                         snakeLen -= half
@@ -308,12 +319,32 @@ def game():
             if mode == 0:
                 if snakeX + tam > tamLargura-10:
                     snakeX = 10
+                    if snakeX == appleX and snakeY == appleY:
+                        appleX = randrange(10,(tamLargura - 10) - tam,10)
+                        appleY = randrange(30,(tamAltura - 10) - tam,10)
+                        snakeLen += 1
+                        score += 1
                 if snakeX < 10:
                     snakeX = (tamLargura - 10)- tam
+                    if snakeX == appleX and snakeY == appleY:
+                        appleX = randrange(10,(tamLargura - 10) - tam,10)
+                        appleY = randrange(30,(tamAltura - 10) - tam,10)
+                        snakeLen += 1
+                        score += 1
                 if snakeY + tam > (tamAltura - 10):
                     snakeY = 30
+                    if snakeX == appleX and snakeY == appleY:
+                        appleX = randrange(10,(tamLargura - 10) - tam,10)
+                        appleY = randrange(30,(tamAltura - 10) - tam,10)
+                        snakeLen += 1
+                        score += 1
                 if snakeY < 30:
                     snakeY = (tamAltura - 10) - tam
+                    if snakeX == appleX and snakeY == appleY:
+                        appleX = randrange(10,(tamLargura - 10) - tam,10)
+                        appleY = randrange(30,(tamAltura - 10) - tam,10)
+                        snakeLen += 1
+                        score += 1
             #Médio e dificíl
             if mode == 1 or mode == 2:
                 if snakeX + tam > (tamLargura - 10):
